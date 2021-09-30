@@ -1,0 +1,99 @@
+stages:
+  - plan-dev
+  - apply-dev
+  - plan-uat
+  - apply-uat
+  - plan-prod
+  - apply-prod
+  - deploy-app
+
+include:
+  - project: "primera/primera-platform/buap-applications/cloud-infrastructure/terraform-modules/terraform-pipeline-template"
+    ref: master
+    file:
+      - .gitlab-ci-base.yml
+
+image:
+  name: 283563970713.dkr.ecr.eu-central-1.amazonaws.com/terraform-tools:test
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+
+plan-dev:
+  stage: plan-dev
+  environment:
+    name: dev
+  extends: .terraform-plan-generation
+
+apply-dev:
+  stage: apply-dev
+  extends: .terraform-apply
+  dependencies:
+    - plan-dev
+  environment:
+    name: dev
+  when: manual
+  allow_failure: false
+
+
+plan-uat:
+  stage: plan-uat
+  environment:
+    name: uat
+  extends: .terraform-plan-generation
+
+apply-uat:
+  stage: apply-uat
+  extends: .terraform-apply
+  dependencies:
+    - plan-uat
+  environment:
+    name: uat
+  when: manual
+  allow_failure: false
+
+
+plan-prod:
+  stage: plan-prod
+  environment:
+    name: prod
+  extends: .terraform-plan-generation
+
+apply-prod:
+  stage: apply-prod
+  extends: .terraform-apply
+  dependencies:
+    - plan-prod
+  environment:
+    name: prod
+  when: manual
+  allow_failure: false
+
+deploy-app-dev:
+  stage: deploy-app
+  extends: .teraform-app-deploy
+  environment:
+    name: dev
+  only:
+    variables:
+    - $ENVIRONMENT_NAME == "dev"
+
+deploy-app-uat:
+  stage: deploy-app
+  extends: .teraform-app-deploy
+  environment:
+    name: uat
+  only:
+    variables:
+    - $ENVIRONMENT_NAME == "uat"
+
+deploy-app-prod:
+  stage: deploy-app
+  extends: .teraform-app-deploy
+  environment:
+    name: prod
+  only:
+    variables:
+    - $ENVIRONMENT_NAME == "prod"
+
