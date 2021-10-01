@@ -1,12 +1,28 @@
-const sql = require('mssql');
-
-exports.handler = async event => {
-  try {
-    await sql.connect('mssql://username:password@12.23.33.2:74/database');
-    return 'connected';
-
-  } catch (err) {
-    console.error('cannot connect', err.message);
+const sql = require('mssql')
+const sqlConfig = {
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  database: process.env.RDS_DB_NAME,
+  server: process.env.RDS_HOST,
+  // pool: {
+  //   max: 10,
+  //   min: 0,
+  //   idleTimeoutMillis: 30000
+  // },
+  port: 1433,
+  options: {
+    // encrypt: true, // for azure
+    trustServerCertificate: false // change to true for local dev / self-signed certs
   }
-  return 'connect failed';
+}
+
+exports.handler = async () => {
+ try {
+  // make sure that any items are correctly URL encoded in the connection string
+  await sql.connect(sqlConfig)
+  const result = await sql.query`SELECT * FROM SYS.SYSDATABASES`
+  console.dir(result)
+ } catch (err) {
+  // ... error checks
+ }
 }
