@@ -16,13 +16,15 @@ const sqlConfig = {
   }
 }
 
-exports.handler = async () => {
+exports.handler = async function asyncCall () {
  try {
   // make sure that any items are correctly URL encoded in the connection string
   await sql.connect(sqlConfig)
-  const result = await sql.query`SELECT * FROM SYS.SYSDATABASES`
+  const result = await sql.query`SELECT optname, value, major_version, minor_version, install_failures FROM master.dbo.MSreplication_options`
   console.dir(result)
  } catch (err) {
-  // ... error checks
+  console.log(err)
  }
 }
+
+asyncCall()
