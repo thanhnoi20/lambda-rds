@@ -1,13 +1,13 @@
 variable "vpc_subnet_ids" {
   description = "List of subnet ids when Lambda Function should run in the VPC. Usually private or intra subnets."
   type        = list(string)
-  default     = ["subnet-0d14e7e77c700322d", "subnet-07fb60d93cd359ecf"]
+  default     = ["subnet-0b617badaf700f0e5", "subnet-00f8c212768c61825"]
 }
 
 variable "vpc_security_group_ids" {
   description = "List of security group ids when Lambda Function should run in the VPC."
   type        = list(string)
-  default     = ["sg-0576688487543e0e7"]
+  default     = ["sg-0d2e84c8379e14350"]
 }
 
 variable provider_role_arn {

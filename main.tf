@@ -1,8 +1,8 @@
 provider "aws" {
-  region = "eu-central-1"
-  assume_role {
-    role_arn = var.provider_role_arn
-}
+  region = "us-west-2"
+  # assume_role {
+  #   role_arn = var.provider_role_arn
+# }
 }
 module "lambda_function" {
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v2.18.0"
@@ -19,7 +19,7 @@ module "lambda_function" {
   vpc_security_group_ids = var.vpc_security_group_ids
   attach_network_policy = true
   environment_variables = {
-    RDS_HOST     = "pg-dev-euc1-db-mssql-se-encrypted-03.cd2dkrwx130d.eu-central-1.rds.amazonaws.com:1433"
+    RDS_HOST     = "pg-dev-euc1-db-mssql-se-encrypted-03.cd2dkrwx130d.eu-central-1.rds.amazonaws.com"
     RDS_USERNAME = "primera-gcms"
     RDS_DB_NAME  = "gcms"
     SECRET_NAME  = "arn:aws:secretsmanager:eu-central-1:472820313408:secret:pg-dev-dbpass-gcms-2Uhl6s"
