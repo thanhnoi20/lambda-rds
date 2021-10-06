@@ -1,18 +1,27 @@
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
 // Set region
-AWS.config.update({region: 'us-west-2'});
+AWS.config.update({region: 'eu-central-1'});
 
+exports.handler = async(event, context) => {
+// exports.handler = function(event, context) {
+// Handle promise's fulfilled/rejected states
 // Create publish parameters
+try {
+  // make sure that any items are correctly URL encoded in the connection string
+  await sql.connect(sqlConfig)
+  const result = await sql.query`select * FROM gcms.T_Release WHERE endtime<getdate() AND status not in ('Implemented','Cancelled','Rejected')`
+  console.dir(result)
+ } catch (err) {
+  console.log(err)
+ }
 var params = {
-  Message: 'MESSAGE_TEXT', /* required */
-  TopicArn: 'arn:aws:sns:us-west-2:471536164341:gcms-sns-notification'
+  Message: result, /* required */
+  TopicArn: 'arn:aws:sns:eu-central-1:472820313408:gcms-sns-notification'
 };
 
 // Create promise and SNS service object
 var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
-exports.handler = function(event, context) {
-// Handle promise's fulfilled/rejected states
 publishTextPromise.then(
   function(data) {
     console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
